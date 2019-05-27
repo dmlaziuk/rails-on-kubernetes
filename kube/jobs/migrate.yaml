@@ -1,0 +1,53 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migrate
+spec:
+  template:
+    metadata:
+      name: migrate
+    spec:
+      containers:
+      - name: migrate
+        image: dmlaziuk/railsapp:latest
+        args: ["rake db:create && rake db:migrate"]
+        env:
+        - name: SECRET_KEY_BASE
+          valueFrom:
+            secretKeyRef:
+              name: rails
+              key: secret-key-base
+        - name: RAILS_ENV
+          value: production
+        - name: RAILS_SERVE_STATIC_FILES
+          value: "true"
+        - name: RAILS_LOG_TO_STDOUT
+          value: "true"
+        - name: RAILS_MAX_THREADS
+          value: "2"
+        - name: DATABASE_NAME
+          valueFrom:
+            secretKeyRef:
+              name: database
+              key: name
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: database
+              key: user
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: database
+              key: password
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: database
+              key: url
+        - name: DATABASE_PORT
+          valueFrom:
+            secretKeyRef:
+              name: database
+              key: port
+      restartPolicy: Never

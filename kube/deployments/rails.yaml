@@ -1,0 +1,80 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: rails
+spec:
+  replicas: 1
+  minReadySeconds: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels: 
+      app: rails-app
+      tier: app
+  template:
+    metadata:
+      name: rails
+      labels:
+        app: rails-app
+        tier: app
+    spec:
+      containers:
+      - name: rails
+        image: dmlaziuk/railsapp:latest
+        args: ["rake assets:precompile && rails s -b 0.0.0.0"]
+        env:
+        - name: SECRET_KEY_BASE
+          valueFrom:
+            secretKeyRef:
+              name: rails
+              key: secret-key-base
+        - name: RAILS_ENV
+          value: production
+        - name: RAILS_SERVE_STATIC_FILES
+          value: "true"
+        - name: RAILS_LOG_TO_STDOUT
+          value: "true"
+        - name: RAILS_MAX_THREADS
+          value: "2"
+        - name: DATABASE_NAME
+          valueFrom:
+            secretKeyRef:
+              name: database
+              key: name
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: database
+              key: user
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: database
+              key: password
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: database
+              key: url
+        - name: DATABASE_PORT
+          valueFrom:
+            secretKeyRef:
+              name: database
+              key: port
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: redis
+              key: url
+        - name: REDIS_PORT
+          valueFrom:
+            secretKeyRef:
+              name: redis
+              key: port
+        - name: PORT
+          value: "4000"
+        ports:
+          - containerPort: 4000

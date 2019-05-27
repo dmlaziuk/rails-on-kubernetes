@@ -1,21 +1,11 @@
 namespace :docker do
-  desc "Push docker images to DockerHub"
+  desc 'Push docker images to DockerHub'
   task :push_image do
     TAG = `git rev-parse --short HEAD`.strip
-
-    puts "Building Docker image"
-    sh "docker build -t tzumby/rails-app:#{TAG} ."
-
-    IMAGE_ID = `docker images | grep tzumby\/rails-app | head -n1 | awk '{print $3}'`.strip
-
-    puts "Tagging latest image"
-    sh "docker tag #{IMAGE_ID} tzumby/rails-app:latest"
-
-    puts "Pushing Docker image"
-    sh "docker push tzumby/rails-app:#{TAG}"
-    sh "docker push tzumby/rails-app:latest"
-
-    puts "Done"
+    sh "docker build -t dmlaziuk/railsapp:#{TAG} ."
+    IMAGE_ID = `docker images | grep dmlaziuk\/railsapp | head -n1 | awk '{print $3}'`.strip
+    sh "docker tag #{IMAGE_ID} dmlaziuk/railsapp:latest"
+    sh "docker push dmlaziuk/railsapp:#{TAG}"
+    sh 'docker push dmlaziuk/railsapp:latest'
   end
-
 end

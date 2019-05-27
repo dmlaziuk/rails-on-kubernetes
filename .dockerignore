@@ -7,3 +7,7 @@
 !/tmp/.keep
 
 .byebug_history
+
+Dockerfile
+docker-compose.yml
+kube
