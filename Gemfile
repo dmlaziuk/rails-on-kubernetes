@@ -5,6 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
+gem 'aws-sdk-s3', require: false
 gem 'devise'
 gem 'sidekiq'
 gem 'tzinfo-data'
